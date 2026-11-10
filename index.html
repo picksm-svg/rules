@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1a0b2e">
+<title>PICKA'S HUB — Community Rules</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --c1:#7c3aed; --c2:#c026d3; --c3:#4c1d95;
+    --text:#f5f0ff; --muted:#c9b8ec; --line:rgba(216,180,254,.28);
+    --font-head:'Unbounded','Trebuchet MS',system-ui,sans-serif;
+    --font-body:'Outfit',system-ui,-apple-system,'Segoe UI',sans-serif;
+    --ease:cubic-bezier(.2,.75,.2,1);
+  }
+  @property --ang{syntax:'<angle>';initial-value:0deg;inherits:false}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;overflow:hidden;background:#0d0618;color:var(--text);font-family:var(--font-body)}
+  body{height:100dvh}
+
+  /* ---------- BACKGROUND ---------- */
+  .bg{position:fixed;inset:0;overflow:hidden;z-index:0;
+    background:radial-gradient(120% 90% at 50% 0%, #2a1250 0%, #150a2b 55%, #0a0414 100%)}
+  .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.55;
+    transition:background-color 1.4s ease;will-change:transform}
+  .b1{width:55vmax;height:55vmax;left:-15vmax;top:-18vmax;background-color:var(--c1);animation:float1 22s ease-in-out infinite}
+  .b2{width:48vmax;height:48vmax;right:-14vmax;bottom:-16vmax;background-color:var(--c2);animation:float2 26s ease-in-out infinite}
+  .b3{width:34vmax;height:34vmax;left:35%;top:30%;background-color:var(--c3);opacity:.5;animation:float3 30s ease-in-out infinite}
+  @keyframes float1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(12vmax,8vmax) scale(1.15)}}
+  @keyframes float2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-10vmax,-9vmax) scale(1.2)}}
+  @keyframes float3{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-8vmax,6vmax) scale(.9)}66%{transform:translate(7vmax,-6vmax) scale(1.1)}}
+  .grid{position:absolute;inset:-50% -50% -10% -50%;
+    background-image:linear-gradient(rgba(196,150,255,.14) 1px,transparent 1px),linear-gradient(90deg,rgba(196,150,255,.14) 1px,transparent 1px);
+    background-size:56px 56px;transform:perspective(600px) rotateX(62deg);transform-origin:50% 100%;
+    animation:gridMove 6s linear infinite;
+    -webkit-mask-image:linear-gradient(to top,#000 0%,transparent 70%);mask-image:linear-gradient(to top,#000 0%,transparent 70%);opacity:.6}
+  @keyframes gridMove{to{background-position:0 56px}}
+  #fx{position:absolute;inset:0;width:100%;height:100%}
+  .vignette{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 45%,rgba(5,2,12,.65) 100%);pointer-events:none}
+  .cursor-glow{position:fixed;width:420px;height:420px;border-radius:50%;pointer-events:none;z-index:1;
+    background:radial-gradient(circle,rgba(192,132,252,.22),transparent 65%);transform:translate(-50%,-50%);
+    left:50%;top:50%;transition:opacity .4s}
+  @media (hover:none){.cursor-glow{display:none}}
+
+  /* ---------- HUD ---------- */
+  .progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:20;
+    background:linear-gradient(90deg,#a78bfa,#e879f9,#c084fc);box-shadow:0 0 14px #c084fc;
+    transition:width .8s var(--ease)}
+  .topbar{position:fixed;top:0;left:0;right:0;z-index:15;display:flex;justify-content:space-between;align-items:center;
+    padding:calc(14px + env(safe-area-inset-top)) clamp(14px,3vw,32px) 8px}
+  .brand{font-family:var(--font-head);font-weight:700;font-size:.72rem;letter-spacing:.18em;color:var(--muted);display:flex;align-items:center;gap:10px}
+  .brand i{width:9px;height:9px;border-radius:50%;background:#e879f9;box-shadow:0 0 12px #e879f9;animation:pulse 2s ease-in-out infinite}
+  @keyframes pulse{50%{transform:scale(1.6);opacity:.6}}
+  .top-right{display:flex;align-items:center;gap:12px}
+  .counter{font-family:var(--font-head);font-size:.75rem;letter-spacing:.12em;color:var(--muted)}
+  .counter b{color:#fff}
+  .icon-btn{width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);
+    color:var(--text);cursor:pointer;display:grid;place-items:center;backdrop-filter:blur(10px);transition:.25s}
+  .icon-btn:hover{background:rgba(192,132,252,.25);transform:translateY(-2px);box-shadow:0 8px 22px rgba(168,85,247,.35)}
+  .icon-btn svg{width:18px;height:18px}
+
+  .nav{position:fixed;bottom:calc(18px + env(safe-area-inset-bottom));left:0;right:0;z-index:15;
+    display:flex;justify-content:center;align-items:center;gap:clamp(10px,2vw,22px)}
+  .nav .icon-btn{width:46px;height:46px;border-radius:50%}
+  .nav .icon-btn:disabled{opacity:.3;pointer-events:none}
+  .dots{display:flex;gap:7px;padding:10px 14px;border-radius:99px;background:rgba(255,255,255,.06);
+    border:1px solid var(--line);backdrop-filter:blur(10px);max-width:min(60vw,420px)}
+  .dot{width:8px;height:8px;border-radius:99px;background:rgba(216,180,254,.35);border:0;cursor:pointer;
+    transition:all .45s var(--ease);flex:none}
+  .dot.on{width:26px;background:linear-gradient(90deg,#a78bfa,#e879f9);box-shadow:0 0 12px #c084fc}
+  .hint{position:fixed;right:clamp(14px,3vw,32px);bottom:calc(30px + env(safe-area-inset-bottom));z-index:14;
+    font-size:.72rem;color:var(--muted);letter-spacing:.08em;opacity:.8}
+  @media (max-width:760px){.hint{display:none}.dots{gap:5px;padding:9px 10px}.dot{width:6px;height:6px}.dot.on{width:18px}}
+
+  /* ---------- STAGE / SLIDES ---------- */
+  .stage{position:fixed;inset:0;z-index:5;perspective:1500px}
+  .slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    padding:clamp(64px,10vh,96px) clamp(12px,4vw,48px) clamp(84px,13vh,116px);
+    opacity:0;visibility:hidden;pointer-events:none;
+    transition:opacity .85s var(--ease),transform .95s var(--ease),filter .85s var(--ease),visibility 0s linear .95s}
+  .slide.active{opacity:1;visibility:visible;pointer-events:auto;transform:none;filter:none;transition-delay:0s}
+  .slide.before{transform:translateX(-16%) scale(.92)}
+  .slide.after{transform:translateX(16%) scale(.92)}
+  .slide[data-fx="zoom"].before{transform:scale(1.28);filter:blur(14px)}
+  .slide[data-fx="zoom"].after{transform:scale(.72);filter:blur(14px)}
+  .slide[data-fx="flip"].before{transform:rotateY(-38deg) translateX(-22%) scale(.9)}
+  .slide[data-fx="flip"].after{transform:rotateY(38deg) translateX(22%) scale(.9)}
+  .slide[data-fx="rise"].before{transform:translateY(-14%) scale(.94);filter:blur(8px)}
+  .slide[data-fx="rise"].after{transform:translateY(14%) scale(.94);filter:blur(8px)}
+
+  .card{position:relative;width:100%;max-width:880px;max-height:100%;overflow-y:auto;overflow-x:hidden;
+    padding:clamp(20px,3.4vw,42px);border-radius:30px;
+    background:linear-gradient(145deg,rgba(255,255,255,.10),rgba(255,255,255,.035));
+    backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+    box-shadow:0 30px 80px rgba(10,2,30,.55),inset 0 1px 0 rgba(255,255,255,.18);
+    scrollbar-width:thin;scrollbar-color:#a855f7 transparent}
+  .card::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.5px;pointer-events:none;
+    background:conic-gradient(from var(--ang),transparent 0 60%,#e879f9 80%,#a78bfa 90%,transparent 100%);
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;
+    mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);
+    animation:spin 6s linear infinite}
+  @keyframes spin{to{--ang:360deg}}
+
+  /* entrance animations (retrigger each time a slide becomes active) */
+  .anim{opacity:0}
+  .slide.active .anim{animation:up .8s var(--ease) both;animation-delay:calc(var(--d,0) * 1ms + 280ms)}
+  @keyframes up{from{opacity:0;transform:translateY(26px) scale(.97);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+  .slide.active .pop{animation:pop .9s cubic-bezier(.34,1.56,.64,1) both;animation-delay:calc(var(--d,0) * 1ms + 250ms)}
+  @keyframes pop{from{opacity:0;transform:scale(.3) rotate(-20deg)}to{opacity:1;transform:none}}
+
+  .head{display:flex;align-items:center;gap:clamp(12px,2vw,20px);margin-bottom:clamp(14px,2.4vw,24px)}
+  .ico{flex:none;width:clamp(54px,7vw,72px);height:clamp(54px,7vw,72px);border-radius:22px;display:grid;place-items:center;
+    font-size:clamp(1.6rem,3.4vw,2.2rem);background:linear-gradient(135deg,rgba(167,139,250,.4),rgba(232,121,249,.3));
+    border:1px solid var(--line);box-shadow:0 0 30px rgba(192,132,252,.45);animation:bob 4s ease-in-out infinite}
+  @keyframes bob{50%{transform:translateY(-6px) rotate(3deg)}}
+  .badge{display:inline-block;font-family:var(--font-head);font-size:.68rem;letter-spacing:.22em;font-weight:700;
+    padding:6px 12px;border-radius:99px;color:#f0abfc;background:rgba(232,121,249,.12);border:1px solid rgba(232,121,249,.35);margin-bottom:8px}
+  h2{font-family:var(--font-head);font-weight:800;font-size:clamp(1.25rem,3.6vw,2.3rem);line-height:1.15;letter-spacing:.01em;
+    background:linear-gradient(90deg,#fff,#e9d5ff 40%,#f0abfc);-webkit-background-clip:text;background-clip:text;color:transparent;text-transform:uppercase}
+  .bar{height:3px;border-radius:9px;margin:0 0 clamp(12px,2vw,20px);background:linear-gradient(90deg,#a78bfa,#e879f9,transparent);width:0}
+  .slide.active .bar{animation:grow 1s var(--ease) .5s forwards}
+  @keyframes grow{to{width:100%}}
+
+  ol{list-style:none;display:grid;gap:clamp(8px,1.3vw,12px)}
+  .rule{position:relative;display:flex;align-items:center;gap:14px;padding:clamp(11px,1.6vw,15px) clamp(12px,1.8vw,18px);
+    border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(216,180,254,.14);
+    font-size:clamp(.95rem,1.7vw,1.15rem);font-weight:400;overflow:hidden;transition:transform .35s var(--ease),background .35s,border-color .35s,box-shadow .35s}
+  .rule::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.14) 50%,transparent 70%);
+    transform:translateX(-120%);transition:transform .8s var(--ease)}
+  .rule:hover{transform:translateX(8px);background:rgba(192,132,252,.14);border-color:rgba(232,121,249,.45);box-shadow:0 10px 30px rgba(124,58,237,.3)}
+  .rule:hover::after{transform:translateX(120%)}
+  .num{flex:none;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-family:var(--font-head);font-weight:700;
+    font-size:.82rem;color:#fff;background:linear-gradient(135deg,var(--c1),var(--c2));box-shadow:0 4px 16px rgba(168,85,247,.5)}
+
+  /* cover + final */
+  .center{text-align:center;display:flex;flex-direction:column;align-items:center}
+  .gem{width:clamp(96px,17vw,150px);height:auto;filter:drop-shadow(0 0 26px rgba(192,132,252,.8));animation:bob 5s ease-in-out infinite}
+  .eyebrow{font-family:var(--font-head);font-size:clamp(.7rem,1.5vw,.9rem);letter-spacing:.35em;color:#f0abfc;margin:18px 0 6px}
+  .mega{font-family:var(--font-head);font-weight:900;font-size:clamp(2rem,8.5vw,5rem);line-height:1.02;letter-spacing:.02em;text-transform:uppercase;
+    background:linear-gradient(100deg,#fff 0%,#d8b4fe 30%,#f0abfc 50%,#a78bfa 70%,#fff 100%);background-size:250% 100%;
+    -webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 5s linear infinite}
+  @keyframes shine{to{background-position:-250% 0}}
+  .sub{font-size:clamp(1.05rem,2.6vw,1.6rem);font-weight:300;color:var(--muted);margin-top:10px;letter-spacing:.04em}
+  .lead{font-size:clamp(.95rem,1.9vw,1.2rem);color:var(--text);opacity:.92;margin-top:clamp(16px,3vw,28px);max-width:560px;line-height:1.6}
+  .cta{margin-top:clamp(20px,3.4vw,34px);display:inline-flex;align-items:center;gap:10px;padding:13px 26px;border-radius:99px;border:0;cursor:pointer;
+    font-family:var(--font-head);font-weight:700;font-size:.78rem;letter-spacing:.16em;color:#fff;
+    background:linear-gradient(90deg,#7c3aed,#c026d3);box-shadow:0 10px 34px rgba(168,85,247,.55);transition:.3s}
+  .cta:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 16px 44px rgba(217,70,239,.65)}
+  .cta svg{width:16px;height:16px;animation:nudge 1.4s ease-in-out infinite}
+  @keyframes nudge{50%{transform:translateX(5px)}}
+
+  /* punishments */
+  .ladder .rule{--sev:#a78bfa;border-left:4px solid var(--sev)}
+  .ladder .num{background:var(--sev);color:#1a0b2e;box-shadow:0 4px 18px color-mix(in srgb,var(--sev) 60%,transparent)}
+  .note{margin-top:clamp(12px,2vw,20px);padding:14px 18px;border-radius:16px;background:rgba(232,121,249,.1);border:1px dashed rgba(232,121,249,.5);
+    font-size:clamp(.9rem,1.6vw,1.05rem);color:#f5d0fe;text-align:center}
+  .intro{color:var(--muted);margin-bottom:12px;font-size:clamp(.95rem,1.7vw,1.1rem)}
+
+  .final-lines{display:grid;gap:6px;margin-top:clamp(16px,2.6vw,26px);font-family:var(--font-head);font-weight:500;font-size:clamp(.9rem,2.2vw,1.35rem);color:#f0abfc;letter-spacing:.06em}
+  .sig{margin-top:clamp(18px,3vw,30px);font-size:.85rem;letter-spacing:.2em;color:var(--muted)}
+
+  @media (max-width:560px){
+    .card{border-radius:24px}
+    .head{flex-direction:row;align-items:center}
+    .rule{gap:11px;border-radius:14px}
+    .num{width:30px;height:30px;border-radius:9px}
+  }
+  @media (max-height:560px){
+    .slide{padding-top:56px;padding-bottom:72px}
+    .ico{width:46px;height:46px;font-size:1.4rem}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <div class="grid"></div>
+  <canvas id="fx"></canvas>
+  <div class="vignette"></div>
+</div>
+<div class="cursor-glow" id="glow"></div>
+<div class="progress" id="progress"></div>
+
+<div class="topbar">
+  <div class="brand"><i></i>PICKA'S HUB</div>
+  <div class="top-right">
+    <div class="counter" id="counter"></div>
+    <button class="icon-btn" id="fs" aria-label="Fullscreen" title="Fullscreen (F)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+    </button>
+  </div>
+</div>
+
+<main class="stage" id="stage"></main>
+
+<div class="nav">
+  <button class="icon-btn" id="prev" aria-label="Previous">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <div class="dots" id="dots"></div>
+  <button class="icon-btn" id="next" aria-label="Next">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+</div>
+<div class="hint">← → arrow keys · swipe · scroll</div>
+
+<script>
+/* ============ CONTENT ============ */
+const GEM = `
+<svg class="gem" viewBox="0 0 120 120" aria-hidden="true">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e9d5ff"/><stop offset=".5" stop-color="#a855f7"/><stop offset="1" stop-color="#5b21b6"/></linearGradient>
+    <linearGradient id="g2" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#7c3aed"/><stop offset="1" stop-color="#f0abfc"/></linearGradient>
+  </defs>
+  <polygon points="60,6 108,34 108,86 60,114 12,86 12,34" fill="url(#g1)" stroke="#f5d0fe" stroke-width="2"/>
+  <polygon points="60,6 108,34 60,60 12,34" fill="rgba(255,255,255,.28)"/>
+  <polygon points="60,60 108,34 108,86 60,114" fill="rgba(60,20,120,.35)"/>
+  <polygon points="12,34 60,60 60,114 12,86" fill="url(#g2)" opacity=".55"/>
+  <text x="60" y="76" text-anchor="middle" font-family="Unbounded,Trebuchet MS,sans-serif" font-weight="900" font-size="42" fill="#fff" style="filter:drop-shadow(0 2px 6px rgba(40,10,90,.7))">P</text>
+</svg>`;
+
+const SLIDES = [
+  {type:'cover'},
+  {n:'01', title:'General Behavior', icon:'🤝', rules:[
+    'Respect all members.','No harassment, toxicity, or discrimination.','No unnecessary arguments or drama.',
+    'Keep conversations civil and appropriate.',"Respect everyone's opinions."]},
+  {n:'02', title:'Script Sharing', icon:'📜', rules:[
+    'Share scripts only in designated channels.',"No stealing or claiming another person's work.",'Always give proper credits to creators.',
+    'No malicious or harmful script submissions.','Do not distribute modified scripts as your own.']},
+  {n:'03', title:'Executor & Script Support', icon:'🛠️', rules:[
+    'Use the appropriate support channels.','Provide your executor name when reporting issues.','Include screenshots or error messages when possible.',
+    'Do not repeatedly ping staff for support.','Be patient while waiting for assistance.']},
+  {n:'04', title:'Key System & Premium', icon:'🔑', rules:[
+    'No fake key claims or fraudulent transactions.',"Do not impersonate official PICKA'S HUB services.",'No unauthorized key selling or reselling.',
+    'Never share your private account credentials.','Report key system issues to the appropriate staff.']},
+  {n:'05', title:'Bug Reports', icon:'🐞', rules:[
+    'Report bugs with accurate information.','Do not intentionally submit fake reports.','Avoid duplicate bug reports.',
+    'Report broken scripts and outdated game support.','Do not abuse reported vulnerabilities.']},
+  {n:'06', title:'Advertising & Promotion', icon:'📢', rules:[
+    'No unauthorized advertising.','No unsolicited server invitations.','No self-promotion without permission.',
+    'No phishing or suspicious promotional links.','Keep promotions in designated channels.']},
+  {n:'07', title:'Security & Privacy', icon:'🔒', rules:[
+    'No account or credential theft.','No phishing or malicious downloads.',"Never request another member's login credentials.",
+    'No doxxing or sharing private information.','Download files only from trusted sources.']},
+  {n:'08', title:'Staff & Administration', icon:'🛡️', rules:[
+    'Follow staff instructions.','No impersonating staff members.','No abusing tickets or support channels.',
+    'Do not bypass moderation actions.','Contact staff respectfully for appeals.']},
+  {type:'punish', n:'09', title:'Punishments', icon:'⚖️', intro:'Violations may result in:', rules:[
+    'Verbal Warning','Official Warning','Temporary Mute','Temporary Suspension','Permanent Ban'],
+    note:'The punishment depends on the severity of the violation.'},
+  {type:'final'}
+];
+
+/* amethyst palette shifts per slide [c1, c2, c3] */
+const THEMES = [
+  ['#7c3aed','#c026d3','#4c1d95'],['#8b5cf6','#d946ef','#5b21b6'],['#6d28d9','#a855f7','#3b0764'],
+  ['#7c3aed','#ec4899','#4c1d95'],['#9333ea','#c026d3','#581c87'],['#6366f1','#a855f7','#312e81'],
+  ['#a855f7','#e879f9','#6b21a8'],['#7e22ce','#6366f1','#3b0764'],['#8b5cf6','#f472b6','#4c1d95'],
+  ['#9333ea','#fb7185','#581c87'],['#a855f7','#e879f9','#5b21b6']
+];
+const FX = ['zoom','slide','flip','rise','slide','zoom','flip','rise','slide','zoom','flip'];
+const SEV = ['#c4b5fd','#a78bfa','#e879f9','#f472b6','#fb7185'];
+
+/* ============ BUILD ============ */
+const stage = document.getElementById('stage');
+const dotsEl = document.getElementById('dots');
+
+function rulesHTML(rules, base, cls=''){
+  return `<ol class="${cls}">` + rules.map((r,i)=>
+    `<li class="rule anim" style="--d:${base+i*110};${cls?`--sev:${SEV[i]}`:''}"><span class="num">${i+1}</span><span>${r}</span></li>`).join('') + `</ol>`;
+}
+
+function build(s){
+  if(s.type==='cover') return `
+    <div class="card center">
+      <div class="pop" style="--d:0">${GEM}</div>
+      <div class="eyebrow anim" style="--d:250">COMMUNITY RULES</div>
+      <h1 class="mega anim" style="--d:400">PICKA'S<br>HUB</h1>
+      <p class="sub anim" style="--d:600">Welcome to PICKA'S HUB!</p>
+      <p class="lead anim" style="--d:800">Please read and follow all server rules before participating in our community.</p>
+      <button class="cta anim" style="--d:1000" data-go="next">START READING
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    </div>`;
+  if(s.type==='final') return `
+    <div class="card center">
+      <div class="pop" style="--d:0">${GEM}</div>
+      <p class="eyebrow anim" style="--d:250">SLIDE 10 — FINAL REMINDER</p>
+      <h2 class="mega anim" style="--d:400;font-size:clamp(1.7rem,6.4vw,3.6rem)">WELCOME TO<br>PICKA'S HUB!</h2>
+      <div class="final-lines">
+        <span class="anim" style="--d:650">Stay respectful.</span>
+        <span class="anim" style="--d:800">Share responsibly.</span>
+        <span class="anim" style="--d:950">Keep the community safe.</span>
+      </div>
+      <p class="lead anim" style="--d:1150">By remaining in this server, you agree to follow all community rules.</p>
+      <p class="lead anim" style="--d:1300;margin-top:10px">Thank you for being part of PICKA'S HUB!</p>
+      <p class="sig anim" style="--d:1500">— PICKA'S HUB ADMINISTRATION</p>
+    </div>`;
+  const punish = s.type==='punish';
+  return `
+    <div class="card">
+      <div class="head">
+        <div class="ico pop" style="--d:0">${s.icon}</div>
+        <div>
+          <span class="badge anim" style="--d:150">SLIDE ${s.n}</span>
+          <h2 class="anim" style="--d:250">${s.title}</h2>
+        </div>
+      </div>
+      <div class="bar"></div>
+      ${punish?`<p class="intro anim" style="--d:400">${s.intro}</p>`:''}
+      ${rulesHTML(s.rules, punish?500:420, punish?'ladder':'')}
+      ${punish?`<div class="note anim" style="--d:1150">${s.note}</div>`:''}
+    </div>`;
+}
+
+SLIDES.forEach((s,i)=>{
+  const sec = document.createElement('section');
+  sec.className = 'slide after';
+  sec.dataset.fx = FX[i];
+  sec.innerHTML = build(s);
+  stage.appendChild(sec);
+  const d = document.createElement('button');
+  d.className='dot'; d.setAttribute('aria-label','Go to slide '+(i+1));
+  d.onclick=()=>go(i);
+  dotsEl.appendChild(d);
+});
+const slideEls = [...stage.children], dotEls = [...dotsEl.children];
+const counter = document.getElementById('counter'), progress = document.getElementById('progress');
+const prevBtn = document.getElementById('prev'), nextBtn = document.getElementById('next');
+let cur = -1, lock = false;
+
+/* ============ NAVIGATION ============ */
+function go(n){
+  n = Math.max(0, Math.min(SLIDES.length-1, n));
+  if(n===cur) return;
+  cur = n;
+  slideEls.forEach((el,i)=>{
+    el.classList.toggle('active', i===cur);
+    el.classList.toggle('before', i<cur);
+    el.classList.toggle('after', i>cur);
+    if(i===cur) el.querySelector('.card').scrollTop = 0;
+  });
+  dotEls.forEach((d,i)=>d.classList.toggle('on', i===cur));
+  const t = THEMES[cur], r = document.documentElement.style;
+  r.setProperty('--c1',t[0]); r.setProperty('--c2',t[1]); r.setProperty('--c3',t[2]);
+  counter.innerHTML = `<b>${String(cur+1).padStart(2,'0')}</b> / ${String(SLIDES.length).padStart(2,'0')}`;
+  progress.style.width = ((cur+1)/SLIDES.length*100)+'%';
+  prevBtn.disabled = cur===0; nextBtn.disabled = cur===SLIDES.length-1;
+  try{ history.replaceState(null,'','#'+(cur+1)); }catch(e){}
+}
+const next=()=>go(cur+1), prev=()=>go(cur-1);
+prevBtn.onclick=prev; nextBtn.onclick=next;
+stage.addEventListener('click',e=>{ if(e.target.closest('[data-go="next"]')) next(); });
+
+document.addEventListener('keydown',e=>{
+  if(['ArrowRight','ArrowDown','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();next();}
+  else if(['ArrowLeft','ArrowUp','PageUp','Backspace'].includes(e.key)){e.preventDefault();prev();}
+  else if(e.key==='Home') go(0);
+  else if(e.key==='End') go(SLIDES.length-1);
+  else if(e.key.toLowerCase()==='f') toggleFS();
+});
+
+/* mouse wheel (lets long cards scroll before changing slide) */
+window.addEventListener('wheel',e=>{
+  if(lock) return;
+  const card = slideEls[cur].querySelector('.card');
+  const canScroll = card.scrollHeight > card.clientHeight + 2;
+  if(canScroll){
+    const atTop = card.scrollTop<=0, atBot = card.scrollTop+card.clientHeight>=card.scrollHeight-2;
+    if((e.deltaY>0 && !atBot) || (e.deltaY<0 && !atTop)) return;
+  }
+  if(Math.abs(e.deltaY)<12) return;
+  lock = true; setTimeout(()=>lock=false,900);
+  e.deltaY>0 ? next() : prev();
+},{passive:true});
+
+/* touch swipe */
+let sx=0, sy=0, st=0;
+window.addEventListener('touchstart',e=>{const t=e.changedTouches[0];sx=t.clientX;sy=t.clientY;st=Date.now();},{passive:true});
+window.addEventListener('touchend',e=>{
+  const t=e.changedTouches[0], dx=t.clientX-sx, dy=t.clientY-sy;
+  if(Math.abs(dx)>50 && Math.abs(dx)>Math.abs(dy)*1.3 && Date.now()-st<800){ dx<0 ? next() : prev(); }
+},{passive:true});
+
+/* fullscreen */
+function toggleFS(){
+  const d=document, el=d.documentElement;
+  if(!d.fullscreenElement){ (el.requestFullscreen||el.webkitRequestFullscreen||(()=>{})).call(el); }
+  else { (d.exitFullscreen||d.webkitExitFullscreen||(()=>{})).call(d); }
+}
+document.getElementById('fs').onclick = toggleFS;
+
+/* cursor glow */
+const glow = document.getElementById('glow');
+window.addEventListener('pointermove',e=>{ glow.style.left=e.clientX+'px'; glow.style.top=e.clientY+'px'; },{passive:true});
+
+/* ============ PARTICLES ============ */
+(function(){
+  const cv = document.getElementById('fx'), ctx = cv.getContext('2d');
+  let W,H,dpr,P=[];
+  function size(){
+    dpr = Math.min(window.devicePixelRatio||1,2);
+    W = cv.width = innerWidth*dpr; H = cv.height = innerHeight*dpr;
+    const n = Math.round(Math.min(90, innerWidth*innerHeight/16000));
+    P = Array.from({length:n},()=>({x:Math.random()*W,y:Math.random()*H,r:(Math.random()*1.8+.6)*dpr,
+      vx:(Math.random()-.5)*.25*dpr,vy:(-Math.random()*.4-.1)*dpr,a:Math.random()*.6+.25,t:Math.random()*6}));
+  }
+  size(); addEventListener('resize',size);
+  function tick(){
+    ctx.clearRect(0,0,W,H);
+    for(const p of P){
+      p.x+=p.vx; p.y+=p.vy; p.t+=.03;
+      if(p.y<-10){p.y=H+10;p.x=Math.random()*W} if(p.x<-10)p.x=W+10; if(p.x>W+10)p.x=-10;
+      const a = p.a*(.6+.4*Math.sin(p.t));
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.283);
+      ctx.fillStyle=`rgba(233,213,255,${a})`; ctx.shadowColor='#c084fc'; ctx.shadowBlur=10*dpr; ctx.fill();
+    }
+    ctx.shadowBlur=0;
+    for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){
+      const dx=P[i].x-P[j].x, dy=P[i].y-P[j].y, d=dx*dx+dy*dy, m=(120*dpr)**2;
+      if(d<m){ctx.strokeStyle=`rgba(192,132,252,${.16*(1-d/m)})`;ctx.lineWidth=dpr*.7;ctx.beginPath();ctx.moveTo(P[i].x,P[i].y);ctx.lineTo(P[j].x,P[j].y);ctx.stroke();}
+    }
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+
+/* start (supports #3 style deep links) */
+const startAt = parseInt(location.hash.slice(1),10);
+requestAnimationFrame(()=>requestAnimationFrame(()=>go(startAt>0 ? startAt-1 : 0)));
+</script>
+</body>
+</html>
